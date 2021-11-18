@@ -1,0 +1,24 @@
+{
+    "name": "sam-it/symfony-http-psr18",
+    "description": "Provides a Symfony HttpClientInterface that wraps PSR17 and PSR18",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "SamIt\\SymfonyHttpPsr18\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Sam Mousa",
+            "email": "sam@mousa.nl"
+        }
+    ],
+    "require": {
+	"php": ">= 8.0",
+        "psr/http-message": "^1.0",
+        "psr/http-factory": "^1.0",
+        "symfony/http-client-contracts": "^2.4",
+        "psr/http-client": "^1.0"
+    }
+}
