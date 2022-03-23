@@ -12,8 +12,6 @@ use Symfony\Contracts\HttpClient\ResponseStreamInterface;
 
 class SymfonyHttpClient implements SymfonyHttpClientInterface
 {
-    private array $defaults = self::OPTIONS_DEFAULTS;
-
     public function __construct(
         private ClientInterface $psrClient,
         private StreamFactoryInterface $streamFactory,
@@ -31,8 +29,6 @@ class SymfonyHttpClient implements SymfonyHttpClientInterface
     {
         // Create the request
         $request = $this->requestFactory->createRequest($method, $url);
-        // Handle options.
-        $options = array_merge($this->defaults, $options);
 
         unset($options['extra']); // Extra options may be ignored if not supported
 
