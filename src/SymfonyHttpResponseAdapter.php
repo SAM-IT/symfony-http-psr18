@@ -69,7 +69,11 @@ class SymfonyHttpResponseAdapter implements SymfonyResponseInterface
         if ($throw) {
             $this->throw();
         }
-        return $this->response->getHeaders();
+        $result = [];
+        foreach($this->response->getHeaders() as $key => $values) {
+            $result[strtolower($key)] = $values;
+        }
+        return $result;
     }
 
     public function getContent(bool $throw = true): string
