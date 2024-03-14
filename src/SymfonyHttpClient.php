@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace SamIt\SymfonyHttpPsr18;
 
-use JsonSerializable;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
@@ -12,8 +11,12 @@ use Symfony\Contracts\HttpClient\HttpClientInterface as SymfonyHttpClientInterfa
 use Symfony\Contracts\HttpClient\ResponseInterface;
 use Symfony\Contracts\HttpClient\ResponseStreamInterface;
 
-class SymfonyHttpClient implements SymfonyHttpClientInterface
+final class SymfonyHttpClient implements SymfonyHttpClientInterface
 {
+    /**
+     * @var array{json?: mixed, extra?: mixed, auth_bearer?: mixed, user_data?: mixed}
+     */
+    private array $defaultOptions = [];
     public function __construct(
         private ClientInterface $psrClient,
         private StreamFactoryInterface $streamFactory,
@@ -25,13 +28,14 @@ class SymfonyHttpClient implements SymfonyHttpClientInterface
      * We violate the textual requirement that a response must be lazy.
      * Since the initial use case for this component is to use the Symfony Mailer without the Symfony HTTP Client and the
      * implementations all immediately call `getStatusCode` on the response, there is no effective laziness anyway.
-     * @phpstan-param array{json?: JsonSerializable, extra?: mixed, auth_bearer?: string, user_data?: mixed} $options
+     * @phpstan-param array{json?: mixed, extra?: mixed, auth_bearer?: string, user_data?: mixed} $options
      */
     public function request(string $method, string $url, array $options = []): ResponseInterface
     {
         // Create the request
         $request = $this->requestFactory->createRequest($method, $url);
 
+        $options = [...$this->defaultOptions, $options];
         unset($options['extra']); // Extra options may be ignored if not supported
 
         if (isset($options['json'])) {
@@ -41,7 +45,7 @@ class SymfonyHttpClient implements SymfonyHttpClientInterface
             unset($options['json']);
         }
 
-        if (isset($options['auth_bearer'])) {
+        if (isset($options['auth_bearer']) && is_string($options['auth_bearer'])) {
             $request = $request->withHeader("Authorization", "Bearer {$options['auth_bearer']}");
             unset($options['auth_bearer']);
         }
@@ -63,5 +67,25 @@ class SymfonyHttpClient implements SymfonyHttpClientInterface
     public function stream($responses, float $timeout = null): ResponseStreamInterface
     {
         throw new TransportException('Not supported');
+    }
+
+    /**
+     * @param array<string, mixed>$options
+     */
+    public function withOptions(array $options): static
+    {
+        $result = clone $this;
+        $result->defaultOptions = [];
+        foreach (['auth_bearer', 'json', 'user_data'] as $supportedOption) {
+            if (isset($options[$supportedOption])) {
+                $result->defaultOptions[$supportedOption] = $options[$supportedOption];
+                unset($options[$supportedOption]);
+            }
+        }
+
+        if (!empty($options)) {
+            throw new TransportException('Unsupported options where passed');
+        }
+        return $result;
     }
 }
