@@ -35,7 +35,7 @@ final class SymfonyHttpClient implements SymfonyHttpClientInterface
         // Create the request
         $request = $this->requestFactory->createRequest($method, $url);
 
-        $options = [...$this->defaultOptions, $options];
+        $options = [...$this->defaultOptions, ...$options];
         unset($options['extra']); // Extra options may be ignored if not supported
 
         if (isset($options['json'])) {
