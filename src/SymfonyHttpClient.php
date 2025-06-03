@@ -56,7 +56,7 @@ final class SymfonyHttpClient implements SymfonyHttpClientInterface
         }
 
         if (isset($options['headers'])) {
-            foreach($options['headers'] as $name => $value) {
+            foreach ($options['headers'] as $name => $value) {
                 $request = $request->withHeader($name, $value);
             }
             unset($options['headers']);
@@ -71,7 +71,7 @@ final class SymfonyHttpClient implements SymfonyHttpClientInterface
         return new SymfonyHttpResponseAdapter($response, userData: $userData ?? null, request: $request);
     }
 
-    public function stream($responses, float $timeout = null): ResponseStreamInterface
+    public function stream($responses, float|null $timeout = null): ResponseStreamInterface
     {
         throw new TransportException('Not supported');
     }

@@ -22,8 +22,7 @@
     "psr/http-client": "^1.0"
     },
     "require-dev": {
-        "vimeo/psalm": "^5",
-        "phpstan/phpstan": "^1.8",
+        "phpstan/phpstan": "^2",
         "symplify/easy-coding-standard": "^12",
         "captainhook/plugin-composer": "^5.3",
         "ramsey/conventional-commits": "^1.3"
