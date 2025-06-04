@@ -55,6 +55,13 @@ final class SymfonyHttpClient implements SymfonyHttpClientInterface
             unset($options['user_data']);
         }
 
+        if (isset($options['headers'])) {
+            foreach ($options['headers'] as $name => $value) {
+                $request = $request->withHeader($name, $value);
+            }
+            unset($options['headers']);
+        }
+
         if (!empty($options)) {
             throw new TransportException('Unsupported options where passed');
         }
@@ -64,7 +71,7 @@ final class SymfonyHttpClient implements SymfonyHttpClientInterface
         return new SymfonyHttpResponseAdapter($response, userData: $userData ?? null, request: $request);
     }
 
-    public function stream($responses, float $timeout = null): ResponseStreamInterface
+    public function stream($responses, float|null $timeout = null): ResponseStreamInterface
     {
         throw new TransportException('Not supported');
     }

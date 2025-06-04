@@ -25,11 +25,6 @@
                 "conditions": []
             },
             {
-                "action": "vendor/bin/psalm",
-                "options": [],
-                "conditions": []
-            },
-            {
                 "action": "vendor/bin/ecs",
                 "options": [],
                 "conditions": []

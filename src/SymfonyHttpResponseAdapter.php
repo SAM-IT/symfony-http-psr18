@@ -66,6 +66,10 @@ class SymfonyHttpResponseAdapter implements SymfonyResponseInterface
             };
         }
     }
+
+    /**
+     * @return array<string, list<string>>
+     */
     public function getHeaders(bool $throw = true): array
     {
         if ($throw) {
@@ -73,7 +77,7 @@ class SymfonyHttpResponseAdapter implements SymfonyResponseInterface
         }
         $result = [];
         foreach ($this->response->getHeaders() as $key => $values) {
-            $result[strtolower($key)] = $values;
+            $result[strtolower($key)] = array_values($values);
         }
         return $result;
     }
@@ -112,7 +116,7 @@ class SymfonyHttpResponseAdapter implements SymfonyResponseInterface
         $this->response->getBody()->close();
     }
 
-    public function getInfo(string $type = null): mixed
+    public function getInfo(string|null $type = null): mixed
     {
         $data = [
             'canceled' => false,
